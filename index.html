@@ -1,0 +1,70 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111"><title>Ká Lanches</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0d0d0f;color:#fff;font:16px system-ui,Arial}.hero{padding:70px 22px 45px;min-height:440px;display:flex;align-items:end;background:linear-gradient(0deg,#090909,transparent),url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1400&q=80') center/cover}.hero div{max-width:900px;margin:auto;width:100%}.loc{display:inline-block;background:#222;padding:8px 13px;border-radius:25px}h1{font-size:clamp(58px,12vw,100px);line-height:.85;margin:22px 0;font-weight:950}h1 b{color:#ff7a00}.hero p{font-size:20px;max-width:600px}.btn,.add{border:0;border-radius:12px;padding:13px 18px;font-weight:800;background:linear-gradient(100deg,#f22b20,#ffc928);color:#111}.wrap{max-width:1050px;margin:auto;padding:25px 16px 90px}h2{font-size:28px}.tabs,.filters{display:flex;gap:9px;overflow:auto;margin:16px 0}.tabs button,.filters button{white-space:nowrap;padding:12px 16px;border-radius:12px;border:1px solid #444;background:#1c1c20;color:white}.tabs .on,.filters .on{background:#bd3c16}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.item,.cart{background:#1b1b1f;border:1px solid #37373d;border-radius:15px;padding:15px}.item{display:flex;flex-direction:column;min-height:155px}.item p{color:#bbb;font-size:14px;flex:1}.bottom,.total,.line{display:flex;justify-content:space-between;gap:10px;align-items:center}.price{color:#ffd05a;font-weight:900}.add{padding:9px 12px;background:#ef5426;color:white}.note{background:#2b210e;color:#ffe0a1;padding:12px;border-radius:12px;margin:15px 0}.cart{margin-top:25px}.line{padding:10px 0;border-bottom:1px solid #444;font-size:14px}.line button{color:#ff8b70;background:none;border:0}.total{font-size:20px;font-weight:900;padding:15px 0}.fields{display:grid;gap:9px;margin:10px 0}.fields input,.fields textarea{width:100%;padding:12px;background:#101013;border:1px solid #555;border-radius:10px;color:white}.fields textarea{min-height:65px}.send{width:100%;padding:15px;background:#20b85a;color:#071b0d;border:0;border-radius:12px;font-weight:900}.muted{color:#aaa}.hide{display:none}footer{text-align:center;color:#888;padding:25px}
+</style></head><body>
+<header class="hero"><div><span class="loc">📍 Santo Antônio da Platina · PR</span><h1><b>KÁ</b><br>LANCHES</h1><p>Escolha seus favoritos, monte seu pedido e envie direto pelo WhatsApp.</p><button class="btn" onclick="document.querySelector('#menu').scrollIntoView({behavior:'smooth'})">🔥 Ver cardápio</button></div></header>
+<main class="wrap" id="menu"><h2>Escolha seu cardápio</h2><p class="muted">Pedidos separados para lanches e açaí.</p>
+<div class="tabs"><button id="ts" class="on" onclick="mode='s';switchMode()">🍔 Ká Lanches</button><button id="ta" onclick="mode='a';switchMode()">🍇 Açaí Mania</button></div>
+<div id="snack"><div class="filters" id="filters"></div><div class="grid" id="products"></div></div>
+<div id="acai" class="hide"><div class="note">Entrega do açaí: R$ 7,00 dentro da cidade. Outras localidades: consultar. Escolha os complementos nas observações do pedido.</div><div class="grid" id="acaiProducts"></div><div class="note"><b>Frutas:</b> banana, morango e kiwi.<br><b>Complementos:</b> amendoim, Bis branco, bombom, chocobol, confete, creme de amendoim, creme de morango, creme de ninho, creme de Ovomaltine, creme de avelã, Ovomaltine, paçoca, gotas de chocolate, granola, jujuba, KitKat, leite condensado e leite em pó.</div></div>
+<section class="cart"><h2 id="ct">🛒 Pedido — Ká Lanches</h2><div id="items" class="muted">Carrinho vazio. Adicione produtos.</div><div class="total"><span>Total dos itens</span><span id="total">R$ 0,00</span></div><div class="fields"><input id="name" placeholder="Seu nome"><input id="address" placeholder="Endereço para entrega (se necessário)"><textarea id="obs" placeholder="Observações (ex.: adicionais do açaí)"></textarea></div><button class="send" onclick="send()">Enviar pedido pelo WhatsApp</button></section></main><footer>Ká Lanches · Santo Antônio da Platina – PR<br>Confirme disponibilidade, preços e entrega com o estabelecimento.</footer>
+<script>
+const money=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const data=[
+['Tradicionais','Cachorro-quente simples',18,'Pão, salsicha, presunto, queijo, alface, vinagrete e batata palha.'],
+['Tradicionais','Cachorro-quente simples + hambúrguer',23,'Pão, salsicha, presunto, queijo, alface, vinagrete, batata palha e hambúrguer.'],
+['Tradicionais','Cachorro-quente especial',20,'Pão, alface, bacon, 2 salsichas, presunto, queijo, vinagrete e batata palha.'],
+['Tradicionais','Cachorro-quente especial EGG',23,'Pão, alface, ovo, 2 salsichas, presunto, queijo, vinagrete e batata palha.'],
+['Tradicionais','Cachorro-quente especial + hambúrguer',25,'Pão, alface, bacon, 2 salsichas, presunto, queijo, vinagrete, batata palha e hambúrguer.'],
+['Tradicionais','Cachorro-quente especial EGG + Catupiry ou cheddar',27,'Com ovo, bacon, 2 salsichas, queijo, vinagrete, batata palha e Catupiry ou cheddar.'],
+['Tradicionais','Cachorro-quente especial EGG + hambúrguer + Catupiry ou cheddar',30,'Com ovo, bacon, 2 salsichas, hambúrguer, queijo, batata palha e Catupiry ou cheddar.'],
+['Tradicionais','Cachorro-quente Tudão',26,'Pão, salsicha, frango, bacon, hambúrguer, presunto, queijo, milho, vinagrete, Catupiry e batata palha.'],
+['Tradicionais','Cachorro-quente Tudão EGG',28,'Tudão com ovo.'],
+['Tradicionais','Bauru + hambúrguer',16,'Pão, presunto, queijo, tomate, hambúrguer e batata palha.'],
+['Tradicionais','Churrasquinho',26,'Pão, carne, vinagrete, queijo e batata palha.'],
+['Prime','Bauru',14,'Pão, presunto, queijo, tomate e batata palha.'],
+['Prime','Misto quente',13,'Pão, presunto, queijo e batata palha.'],
+['Prime','Misto quente + salsicha',16,'Pão, presunto, queijo, 2 salsichas e batata palha.'],
+['Prime','Misto quente + hambúrguer',16,'Pão, presunto, queijo, hambúrguer e batata palha.'],
+['Prime','X-Dog',26,'Pão, 2 salsichas, bacon, calabresa, cheddar, Catupiry e batata palha.'],
+['Prime','X-Vegetariano',22,'Pão, queijo, Catupiry, alface, tomate e batata palha.'],
+['Prime','X-Calabresa sem salada',22,'Pão, presunto, queijo, hambúrguer, calabresa, cebola e batata palha.'],
+['Prime','X-Bacon sem salada',22,'Pão, presunto, queijo, hambúrguer, bacon e batata palha.'],
+['Prime','X-Bacon EGG sem salada',23,'Pão, presunto, queijo, ovo, hambúrguer, bacon e batata palha.'],
+['Prime','X-Tico',28,'Hambúrguer de costela 160 g, frango, calabresa, milho, presunto, queijo, alface, tomate e batata palha.'],
+['Prime','X-Costela',28,'Pão, bacon, hambúrguer de costela 160 g, queijo, cheddar, alface e tomate.'],
+['Prime','X-Costela Duplo',34,'Pão, bacon, 2 hambúrgueres de costela 160 g, queijo, cheddar, alface e tomate.'],
+['Prime','Moda da casa',30,'Pão, hambúrguer, carne, ovo, bacon, presunto, queijo, alface, tomate e batata frita.'],
+['Prime','X-Tudo',27,'Pão, alface, tomate, presunto, queijo, hambúrguer, frango, calabresa, bacon, ovo e batata palha.'],
+['Prime','X-Tudo + salsicha',29,'X-Tudo com salsicha.'],
+['Prime','X-Tudo Especial',34,'X-Tudo com cheddar e Catupiry.'],
+['Prime','X-Vida',24,'Pão, queijo em dobro, hambúrguer de costela, alface e salsicha.'],
+['Prime','X-Burguer',15,'Pão, presunto, queijo, hambúrguer e batata palha.'],
+['Prime','X-Burguer + salsicha',17,'Pão, 2 salsichas, presunto, queijo, hambúrguer e batata palha.'],
+['Prime','X-Salada',18,'Pão, presunto, queijo, hambúrguer, alface, tomate e batata palha.'],
+['Prime','X-Salada Duplo',22,'Pão, presunto, queijo, 2 hambúrgueres, alface, tomate e batata palha.'],
+['Prime','X-Frango',23,'Pão, presunto, queijo, alface, frango, milho, tomate e batata palha.'],
+['Prime','X-Frango + hambúrguer',26,'X-Frango com hambúrguer.'],
+['Prime','X-Frango + cheddar ou Catupiry',26,'X-Frango com cheddar ou Catupiry.'],
+['Prime','X-Bacon',23,'Pão, presunto, queijo, hambúrguer, alface, bacon, tomate e batata palha.'],
+['Prime','X-Bacon EGG',25,'X-Bacon com ovo.'],
+['Prime','X-Calabresa',23,'Pão, presunto, queijo, hambúrguer, alface, calabresa, cebola, tomate e batata palha.'],
+['Prime','X-Egg',22,'Pão, presunto, queijo, hambúrguer, alface, 2 ovos, tomate e batata palha.'],
+['Prime','X-Kaynan',24,'Pão, presunto, queijo, hambúrguer 180 g, alface, cheddar e batata palha.'],
+['Prime','X-Diego',25,'Pão, 2 ovos, vinagrete, hambúrguer, presunto, queijo, batata palha e cheddar.'],
+['Porções','Calabresa e cebola',27,'Porção de calabresa e cebola.'],['Porções','Batata',26,'Porção de batata.'],['Porções','Batata + queijo e bacon',34,'Porção de batata, queijo e bacon.'],
+['Bebidas','Água',3,'Água.'],['Bebidas','Água com gás',4,'Água com gás.'],['Bebidas','Suco pequeno',7,'Suco pequeno.'],['Bebidas','Suco grande',16,'Suco grande.'],['Bebidas','Refrigerante lata Coca/Fanta',6,'Coca-Cola ou Fanta.'],['Bebidas','Refrigerante 600 ml Coca/Fanta/Sprite',9,'Coca-Cola, Fanta ou Sprite.'],['Bebidas','Refrigerante 1 litro Coca/Antarctica',11,'Coca-Cola ou Antarctica.'],['Bebidas','Refrigerante 2 litros Coca/Fanta/Sprite',15,'Coca-Cola, Fanta ou Sprite.'],['Bebidas','Refrigerante 2 litros Fabiane/Conquista',9,'Fabiane ou Conquista.'],['Bebidas','Tubaína',5,'Tubaína.'],['Bebidas','Toddynho',3,'Toddynho.'],['Bebidas','Cerveja lata Skol/Brahma',6,'Skol ou Brahma.'],['Bebidas','Cerveja lata Conti',5,'Conti.'],['Bebidas','Cerveja Romarinho Skol',5,'Skol.'],['Bebidas','Energético lata Monster',16,'Monster.'],
+['Adicionais','Hambúrguer',6,'Adicional.'],['Adicionais','Salsicha',4,'Adicional.'],['Adicionais','Queijo',6,'Adicional.'],['Adicionais','Hambúrguer 180 g',8,'Adicional.'],['Adicionais','Ovo',3,'Adicional.'],['Adicionais','Cheddar',5,'Adicional.'],['Adicionais','Presunto e queijo',6,'Adicional.'],['Adicionais','Milho',3,'Adicional.'],['Adicionais','Catupiry',4,'Adicional.']
+];
+const acais=[['Açaí 300 ml',17,'Até 3 adicionais'],['Açaí 400 ml',20,'Até 4 adicionais'],['Açaí 500 ml',25,'Até 5 adicionais'],['Açaí 700 ml',32,'Até 6 adicionais']];
+let mode='s',cat='Tradicionais',sc=[],ac=[];
+function switchMode(){document.getElementById('snack').classList.toggle('hide',mode!=='s');document.getElementById('acai').classList.toggle('hide',mode!=='a');document.getElementById('ts').classList.toggle('on',mode==='s');document.getElementById('ta').classList.toggle('on',mode==='a');document.getElementById('ct').textContent=mode==='s'?'🛒 Pedido — Ká Lanches':'🛒 Pedido — Açaí Mania';drawCart()}
+function drawFilters(){let cats=['Tradicionais','Prime','Adicionais','Porções','Bebidas'];document.getElementById('filters').innerHTML=cats.map(c=>`<button class="${cat===c?'on':''}" onclick="cat='${c}';drawFilters();drawProducts()">${c}</button>`).join('')}
+function drawProducts(){document.getElementById('products').innerHTML=data.filter(x=>x[0]===cat).map(x=>`<article class="item"><b>${x[1]}</b><p>${x[3]}</p><div class="bottom"><span class="price">${money(x[2])}</span><button class="add" onclick="add('s',${data.indexOf(x)})">Adicionar +</button></div></article>`).join('')}
+function drawAcai(){document.getElementById('acaiProducts').innerHTML=acais.map((x,i)=>`<article class="item"><b>${x[0]}</b><p>${x[2]}. Escolha seus complementos nas observações.</p><div class="bottom"><span class="price">${money(x[1])}</span><button class="add" onclick="add('a',${i})">Adicionar +</button></div></article>`).join('')}
+function add(t,i){(t==='s'?sc:ac).push(t==='s'?{name:data[i][1],price:data[i][2]}:{name:acais[i][0],price:acais[i][1]});drawCart()}
+function drawCart(){let c=mode==='s'?sc:ac;document.getElementById('items').innerHTML=c.length?c.map((x,i)=>`<div class="line"><span>${x.name} — ${money(x.price)}</span><button onclick="removeItem(${i})">Remover</button></div>`).join(''):'Carrinho vazio. Adicione produtos.';document.getElementById('total').textContent=money(c.reduce((s,x)=>s+x.price,0))}
+function removeItem(i){(mode==='s'?sc:ac).splice(i,1);drawCart()}
+function send(){let c=mode==='s'?sc:ac;if(!c.length){alert('Adicione produtos ao pedido.');return}let n=document.getElementById('name').value.trim();if(!n){alert('Informe seu nome.');return}let a=document.getElementById('address').value.trim(),o=document.getElementById('obs').value.trim(),sum=c.reduce((s,x)=>s+x.price,0);let m=`Olá! Quero fazer um pedido ${mode==='s'?'do Ká Lanches':'do Açaí Mania'}.\nNome: ${n}\n${a?'Endereço: '+a+'\n':''}\nPedido:\n${c.map(x=>'• '+x.name+' — '+money(x.price)).join('\n')}\nTotal dos itens: ${money(sum)}\n${mode==='a'?'Entrega dentro da cidade: R$ 7,00 (confirmar com a loja).\n':''}${o?'Observações: '+o+'\n':''}\nPor favor, confirmem disponibilidade e valor final.`;let phone=mode==='s'?'5543998071319':'5543988254780';window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(m),'_blank')}
+drawFilters();drawProducts();drawAcai();drawCart();
+</script></body></html>
